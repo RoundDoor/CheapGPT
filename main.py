@@ -37,15 +37,24 @@ async def ping(ctx):
 # Command to generate an image from text
 @client.command()
 async def draw(ctx, content):
-    response = aiClient.images.generate(
-        model="dall-e-3",
-        prompt=content,
-        size="1024x1024",
-        quality="standard",
-        n=1,
-    )
-    await util.url_to_image(response.data[0].url, ctx.message)
-
+    # Send a message to the user that the bot is generating the image
+    bends = await ctx.send("Generating image...")
+    # Generate the image
+    try:
+        response = aiClient.images.generate(
+            model="dall-e-3",
+            prompt=content,
+            size="1024x1024",
+            quality="standard",
+            n=1,
+        )
+        await util.url_to_image(response.data[0].url, ctx.message)
+        await bends.delete()
+    # Handle exceptions
+    except Exception as e:
+        logging.error(e)
+        await bends.delete()
+        await ctx.send("An error occurred while generating the image.")
 
 # Start the bot
 client.run(discord_token)
