@@ -1,6 +1,8 @@
 # CheapGPT Discord Bot
 
-![Bot Image](logo.png)
+<p align="center">
+  <img src="bot.png" width="500" height="500">
+</p>
 
 CheapGPT Bot is a Discord bot designed to provide a cost-effective alternative to the OpenAI ChatGPT Plus subscription. Instead of a flat $20 per month fee, CheapGPT Bot operates on a pay-as-you-use model, allowing users to access the OpenAI API directly from Discord.
 
