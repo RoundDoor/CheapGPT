@@ -19,7 +19,9 @@ logging.basicConfig(level=logging.INFO)
 # Set up the Discord client
 intents = discord.Intents.default()
 intents.message_content = True
-client = commands.Bot(command_prefix='$', intents=intents)
+
+# Set the command prefix
+client = discord.Bot(intents=intents)
 
 
 # Event handler for when the bot is ready
@@ -38,8 +40,8 @@ async def ping(ctx):
 @client.command()
 async def draw(ctx, content):
     # Send a message to the user that the bot is generating the image
-    bends = await ctx.send("Generating image...")
     # Generate the image
+    await ctx.defer()
     try:
         response = aiClient.images.generate(
             model="dall-e-3",
@@ -48,13 +50,19 @@ async def draw(ctx, content):
             quality="standard",
             n=1,
         )
-        await util.url_to_image(response.data[0].url, ctx.message)
-        await bends.delete()
+        await util.url_to_image(response.data[0].url, ctx)
+
     # Handle exceptions
     except Exception as e:
         logging.error(e)
-        await bends.delete()
-        await ctx.send("An error occurred while generating the image.")
+        await ctx.send_followup("An error occurred while generating the image.")
+
+
+@client.command(description="Sends the bot's latency.")
+async def test(ctx):
+    await ctx.respond("Pong! Latency is {0}ms".format(round(client.latency * 1000)))
+    await ctx.delete()
+
 
 # Start the bot
 client.run(discord_token)
