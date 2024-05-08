@@ -27,7 +27,10 @@ client = discord.Bot(intents=intents)
 # Event handler for when the bot is ready
 @client.event
 async def on_ready():
-    logging.info(f'Logged in as {client.user.name}')
+    if client.user:
+        logging.info(f'Logged in as {client.user.name}')
+    else:
+        logging.error('Failed to log in')
 
 
 # Command to test if the bot is working
@@ -50,7 +53,8 @@ async def draw(ctx, content):
             quality="standard",
             n=1,
         )
-        await util.url_to_image(response.data[0].url, ctx)
+        if response.data[0].url:
+            await util.url_to_image(response.data[0].url, ctx)
 
     # Handle exceptions
     except Exception as e:
@@ -62,6 +66,21 @@ async def draw(ctx, content):
 async def test(ctx):
     await ctx.respond("Pong! Latency is {0}ms".format(round(client.latency * 1000)))
     await ctx.delete()
+
+@client.command(description="Edit an image with text.")
+async def edit(ctx, content, url):
+    # Send a message to the user that the bot is generating the image
+    # Generate the image
+    await ctx.defer()
+    try:
+        #TODO: Add the ability to edit an image with text
+        #response = aiClient.images.edit()
+        #await util.url_to_image(response.data[0].url, ctx)
+
+    # Handle exceptions
+    except Exception as e:
+        logging.error(e)
+        await ctx.send_followup("An error occurred while generating the image.")
 
 
 # Start the bot
